@@ -1,4 +1,4 @@
-// Package v2 является обёрткой над библиотекой github.com/jmoiron/sqlx.
+// Package postgres является обёрткой над библиотекой github.com/jmoiron/sqlx.
 package postgres
 
 import (

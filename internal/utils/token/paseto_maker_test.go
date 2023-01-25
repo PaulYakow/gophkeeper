@@ -1,4 +1,4 @@
-package token
+package token_test
 
 import (
 	"testing"
@@ -6,7 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gophkeeper/internal/utils/test"
+	"github.com/PaulYakow/gophkeeper/internal/utils/test"
+	tokenPkg "github.com/PaulYakow/gophkeeper/internal/utils/token"
 )
 
 func TestPasetoMaker(t *testing.T) {
@@ -16,10 +17,10 @@ func TestPasetoMaker(t *testing.T) {
 	issuedAt := time.Now()
 	expiredAt := time.Now().Add(duration)
 
-	var maker IMaker
+	var maker tokenPkg.IMaker
 	var err error
 	t.Run("create token maker", func(t *testing.T) {
-		maker, err = NewPasetoMaker(test.RandomString(32))
+		maker, err = tokenPkg.NewPasetoMaker(test.RandomString(32))
 		require.NoError(t, err)
 	})
 
@@ -44,7 +45,7 @@ func TestPasetoMaker(t *testing.T) {
 func TestExpiredPasetoToken(t *testing.T) {
 	var err error
 
-	maker, err := NewPasetoMaker(test.RandomString(32))
+	maker, err := tokenPkg.NewPasetoMaker(test.RandomString(32))
 	require.NoError(t, err)
 
 	var token string
@@ -57,7 +58,7 @@ func TestExpiredPasetoToken(t *testing.T) {
 	t.Run("verify expired token", func(t *testing.T) {
 		payload, err := maker.VerifyToken(token)
 		require.Error(t, err)
-		require.EqualError(t, err, ErrExpiredToken.Error())
+		require.EqualError(t, err, tokenPkg.ErrExpiredToken.Error())
 		require.Nil(t, payload)
 	})
 }

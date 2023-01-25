@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"time"
 
-	"gophkeeper/internal/utils/password"
-	"gophkeeper/internal/utils/token"
+	"github.com/PaulYakow/gophkeeper/internal/utils/password"
+	"github.com/PaulYakow/gophkeeper/internal/utils/token"
 )
 
 type Server struct {
 	repo       IAuthorizationRepo
+	hasher     password.IPasswordHash
 	tokenMaker token.IMaker
 }
 
-func New(repo IAuthorizationRepo) (*Server, error) {
+func New(repo IAuthorizationRepo, hasher password.IPasswordHash) (*Server, error) {
 	//todo: move key to config
+	//todo: move object to input args
 	tokenMaker, err := token.NewPasetoMaker("_0987654321zyxwvutsrq1234567890_")
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
@@ -22,12 +24,13 @@ func New(repo IAuthorizationRepo) (*Server, error) {
 
 	return &Server{
 		repo:       repo,
+		hasher:     hasher,
 		tokenMaker: tokenMaker,
 	}, nil
 }
 
 func (s *Server) RegisterUser(login string, pass string) (string, error) {
-	passwordHash, err := password.Hash(pass)
+	passwordHash, err := s.hasher.Hash(pass)
 	if err != nil {
 		return "", err
 	}

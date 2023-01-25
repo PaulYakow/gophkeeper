@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"gophkeeper/internal/entity"
-	"gophkeeper/internal/server/usecase/repo"
-	"gophkeeper/pkg/postgres"
+	"github.com/PaulYakow/gophkeeper/internal/entity"
+	"github.com/PaulYakow/gophkeeper/internal/server/usecase/repo"
+	"github.com/PaulYakow/gophkeeper/pkg/postgres"
 )
 
 const (

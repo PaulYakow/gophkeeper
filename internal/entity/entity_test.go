@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"gophkeeper/internal/entity"
+	"github.com/PaulYakow/gophkeeper/internal/entity"
 )
 
 const (

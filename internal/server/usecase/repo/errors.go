@@ -1,7 +1,7 @@
 package repo
 
 const (
-	ErrUserNotExist = RepoErr("user already exists")
+	ErrUserExist = RepoErr("user already exists")
 )
 
 type RepoErr string

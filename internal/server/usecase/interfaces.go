@@ -1,6 +1,6 @@
 package usecase
 
-//go:generate mockgen -source=interfaces.go -destination=./mocks_test.go -package=usecase_test
+//go:generate mockgen -source=interfaces.go -destination=../mocks/mocks_usecase.go -package=mocks
 
 type (
 	IAuthorizationService interface {

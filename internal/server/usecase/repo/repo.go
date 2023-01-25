@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gophkeeper/pkg/postgres"
+	"github.com/PaulYakow/gophkeeper/pkg/postgres"
 )
 
 const (

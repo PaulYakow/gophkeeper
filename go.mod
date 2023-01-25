@@ -1,4 +1,4 @@
-module gophkeeper
+module github.com/PaulYakow/gophkeeper
 
 go 1.19
 
