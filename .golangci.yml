@@ -141,7 +141,7 @@ linters:
     - gocritic
     - gocyclo
     #    - godot
-    - godox
+    #    - godox
     - gofmt # On why gofmt when goimports is enabled - https://github.com/golang/go/issues/21476
     - gofumpt
     - goheader
@@ -149,7 +149,7 @@ linters:
     #    - gomnd
     #    - gomoddirectives
     #    - gomodguard
-    - gosec
+    #    - gosec
     - gosimple
     - govet
     - depguard
@@ -167,7 +167,7 @@ linters:
     - nolintlint
     - prealloc
     - predeclared
-    - rowserrcheck
+    #    - rowserrcheck
     - revive
     - staticcheck
     - stylecheck

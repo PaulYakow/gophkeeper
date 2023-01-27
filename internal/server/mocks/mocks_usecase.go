@@ -7,6 +7,7 @@ package mocks
 import (
 	reflect "reflect"
 
+	entity "github.com/PaulYakow/gophkeeper/internal/entity"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -31,6 +32,21 @@ func NewMockIAuthorizationService(ctrl *gomock.Controller) *MockIAuthorizationSe
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockIAuthorizationService) EXPECT() *MockIAuthorizationServiceMockRecorder {
 	return m.recorder
+}
+
+// LoginUser mocks base method.
+func (m *MockIAuthorizationService) LoginUser(login, password string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoginUser", login, password)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LoginUser indicates an expected call of LoginUser.
+func (mr *MockIAuthorizationServiceMockRecorder) LoginUser(login, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginUser", reflect.TypeOf((*MockIAuthorizationService)(nil).LoginUser), login, password)
 }
 
 // RegisterUser mocks base method.
@@ -71,6 +87,20 @@ func (m *MockIAuthorizationRepo) EXPECT() *MockIAuthorizationRepoMockRecorder {
 	return m.recorder
 }
 
+// CloseConnection mocks base method.
+func (m *MockIAuthorizationRepo) CloseConnection() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloseConnection")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CloseConnection indicates an expected call of CloseConnection.
+func (mr *MockIAuthorizationRepoMockRecorder) CloseConnection() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseConnection", reflect.TypeOf((*MockIAuthorizationRepo)(nil).CloseConnection))
+}
+
 // CreateUser mocks base method.
 func (m *MockIAuthorizationRepo) CreateUser(login, passwordHash string) (int, error) {
 	m.ctrl.T.Helper()
@@ -84,4 +114,19 @@ func (m *MockIAuthorizationRepo) CreateUser(login, passwordHash string) (int, er
 func (mr *MockIAuthorizationRepoMockRecorder) CreateUser(login, passwordHash interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockIAuthorizationRepo)(nil).CreateUser), login, passwordHash)
+}
+
+// GetUser mocks base method.
+func (m *MockIAuthorizationRepo) GetUser(login string) (entity.UserDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUser", login)
+	ret0, _ := ret[0].(entity.UserDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUser indicates an expected call of GetUser.
+func (mr *MockIAuthorizationRepoMockRecorder) GetUser(login interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockIAuthorizationRepo)(nil).GetUser), login)
 }

@@ -8,12 +8,13 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
-// PasetoMaker is a PASETO token maker
+// PasetoMaker реализация создателя токенов типа PaseTo.
 type PasetoMaker struct {
 	paseto       *paseto.V2
 	symmetricKey []byte
 }
 
+// NewPasetoMaker возвращает IMaker для взаимодействия.
 func NewPasetoMaker(symmetricKey string) (IMaker, error) {
 	if len(symmetricKey) != chacha20poly1305.KeySize {
 		return nil, fmt.Errorf("invalid key size: must be %d characters", chacha20poly1305.KeySize)
@@ -25,18 +26,20 @@ func NewPasetoMaker(symmetricKey string) (IMaker, error) {
 	}, nil
 }
 
-func (maker *PasetoMaker) CreateToken(userID int, duration time.Duration) (string, error) {
+// Create создаёт токен для переданных id пользователя и продолжительности.
+func (m *PasetoMaker) Create(userID int, duration time.Duration) (string, error) {
 	payload, err := NewPayload(userID, duration)
 	if err != nil {
 		return "", err
 	}
 
-	return maker.paseto.Encrypt(maker.symmetricKey, payload, nil)
+	return m.paseto.Encrypt(m.symmetricKey, payload, nil)
 }
 
-func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
+// Verify проверяет, является ли токен действительным.
+func (m *PasetoMaker) Verify(in string) (*Payload, error) {
 	payload := &Payload{}
-	err := maker.paseto.Decrypt(token, maker.symmetricKey, payload, nil)
+	err := m.paseto.Decrypt(in, m.symmetricKey, payload, nil)
 	if err != nil {
 		return nil, ErrInvalidToken
 	}

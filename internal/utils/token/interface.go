@@ -1,12 +1,16 @@
+// Package token содержит реализацию генерации и проверки паролей.
+// А также интерфейс для взаимодействия с этим модулем.
 package token
+
+//go:generate mockgen -source=interface.go -destination=../../server/mocks/mocks_token.go -package=mocks
 
 import "time"
 
-// IMaker is an interface to manage tokens
+// IMaker абстракция для управления токенами.
 type IMaker interface {
-	// CreateToken creates a new token for specific user_id and duration
-	CreateToken(userID int, duration time.Duration) (string, error)
+	// Create создаёт токен для переданных id пользователя и продолжительности.
+	Create(userID int, duration time.Duration) (string, error)
 
-	// VerifyToken checks if the token is valid or not
-	VerifyToken(token string) (*Payload, error)
+	// Verify проверяет, является ли токен действительным.
+	Verify(in string) (*Payload, error)
 }
