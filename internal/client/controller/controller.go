@@ -1,3 +1,4 @@
+// Package controller реализация протокола запросов к gRPC-серверу (описанного в gophkeeper/proto/...).
 package controller
 
 import (
@@ -10,6 +11,7 @@ type Controller struct {
 	Token string
 }
 
+// New создаёт объект Controller.
 func New(conn *grpc.ClientConn) *Controller {
 	return &Controller{
 		Auth:  NewUserClient(conn),

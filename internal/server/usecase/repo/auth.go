@@ -26,6 +26,7 @@ type AuthPostgres struct {
 	db *postgres.Postgres
 }
 
+// NewAuthPostgres создаёт объект типа AuthPostgres.
 func NewAuthPostgres(db *postgres.Postgres) *AuthPostgres {
 	return &AuthPostgres{db}
 }

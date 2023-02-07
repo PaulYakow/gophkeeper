@@ -10,6 +10,7 @@ import (
 	pb "github.com/PaulYakow/gophkeeper/proto"
 )
 
+// PairServer реализация интерфейса proto.PairServer (описание - gophkeeper/proto/pair.proto)
 type PairServer struct {
 	pb.UnimplementedPairServer
 	pairs usecase.IPairsService
@@ -21,6 +22,7 @@ func NewPairsServer(pairs usecase.IPairsService) *PairServer {
 	}
 }
 
+// GetAll - получение всех значений пар логин/пароль.
 func (s *PairServer) GetAll(ctx context.Context, req *pb.GetAllRequest) (*pb.GetAllResponse, error) {
 	var resp pb.GetAllResponse
 

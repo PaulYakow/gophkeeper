@@ -22,10 +22,12 @@ type PairPostgres struct {
 	db *postgres.Postgres
 }
 
+// NewPairPostgres создаёт объект типа PairPostgres.
 func NewPairPostgres(pg *postgres.Postgres) *PairPostgres {
 	return &PairPostgres{pg}
 }
 
+// GetAllPairs находит в БД все записи типа логин/пароль принадлежащие конкретному пользователю (userID).
 func (p *PairPostgres) GetAllPairs(ctx context.Context, userID int) ([]entity.PairDAO, error) {
 	var result []entity.PairDAO
 

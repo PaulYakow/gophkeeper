@@ -35,6 +35,7 @@ type (
 
 	// IPairsService абстракция сервиса доступа к парам логин/пароль.
 	IPairsService interface {
+		// ViewAllPairs получение всех значений типа логин/пароль.
 		ViewAllPairs(userID int) ([]entity.PairDTO, error)
 	}
 
@@ -60,6 +61,7 @@ type (
 
 	// IPairsRepo абстракция взаимодействия с частью хранилища отвечающей за хранение пар логин/пароль.
 	IPairsRepo interface {
+		// GetAllPairs находит в БД все записи типа логин/пароль принадлежащие конкретному пользователю (userID).
 		GetAllPairs(ctx context.Context, userID int) ([]entity.PairDAO, error)
 	}
 )

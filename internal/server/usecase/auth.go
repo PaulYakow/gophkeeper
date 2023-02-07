@@ -7,12 +7,14 @@ import (
 	"github.com/PaulYakow/gophkeeper/internal/utils/token"
 )
 
+// AuthService сервис аутентификации пользователей.
 type AuthService struct {
 	repo           IAuthorizationRepo
 	passwordHasher password.IPasswordHash
 	tokenMaker     token.IMaker
 }
 
+// NewAuthService создаёт объект типа AuthService.
 func NewAuthService(repo IAuthorizationRepo, hasher password.IPasswordHash, maker token.IMaker) *AuthService {
 	return &AuthService{
 		repo:           repo,

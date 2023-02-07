@@ -60,6 +60,7 @@ func (c *Controller) Run() {
 	}()
 }
 
+// Идентификация пользователя.
 func (c *Controller) userIdentity(ctx context.Context,
 	req interface{},
 	info *grpc.UnaryServerInfo,

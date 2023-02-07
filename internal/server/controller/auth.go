@@ -7,7 +7,7 @@ import (
 	pb "github.com/PaulYakow/gophkeeper/proto"
 )
 
-// UserServer реализация интерфейса pb.UserServer (описание - gophkeeper/proto/user.proto)
+// UserServer реализация интерфейса proto.UserServer (описание - gophkeeper/proto/user.proto)
 type UserServer struct {
 	pb.UnimplementedUserServer
 	auth usecase.IAuthorizationService
