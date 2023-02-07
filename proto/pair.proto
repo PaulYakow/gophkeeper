@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "gophkeeper/proto";
+
+message GetAllRequest {
+  string token = 1;
+}
+
+message PairMsg {
+  int64 id = 1;
+  string login = 2;
+  string password = 3;
+  string metadata = 4;
+}
+
+message GetAllResponse {
+  repeated PairMsg pairs = 1;
+  string error = 2;
+}
+
+service Pair {
+  rpc GetAll(GetAllRequest) returns (GetAllResponse);
+}

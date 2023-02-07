@@ -1,5 +1,5 @@
 app:
-  name: 'gophkeeper'
+  name: 'gophkeeper-server'
   version: '1.0.0'
 
 postgres:

@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"context"
 	"errors"
 	"os"
 	"testing"
@@ -19,7 +20,7 @@ import (
 var serverMock = struct {
 	ctrl   *gomock.Controller
 	uc     *usecase.Usecase
-	repo   *mocks.MockIAuthorizationRepo
+	repo   *mocks.MockIRepo
 	hasher *mocks.MockIPasswordHash
 	maker  *mocks.MockIMaker
 }{}
@@ -42,12 +43,15 @@ func TestMain(m *testing.M) {
 func TestNew(t *testing.T) {
 	serverMock.ctrl = gomock.NewController(t)
 
-	serverMock.repo = mocks.NewMockIAuthorizationRepo(serverMock.ctrl)
+	serverMock.repo = mocks.NewMockIRepo(serverMock.ctrl)
 	serverMock.hasher = mocks.NewMockIPasswordHash(serverMock.ctrl)
 	serverMock.maker = mocks.NewMockIMaker(serverMock.ctrl)
 
 	var err error
-	serverMock.uc, err = usecase.New(serverMock.repo, serverMock.hasher, serverMock.maker)
+
+	auth := usecase.NewAuthService(serverMock.repo, serverMock.hasher, serverMock.maker)
+	pairs := usecase.NewPairsService(serverMock.repo)
+	serverMock.uc, err = usecase.New(auth, pairs)
 
 	t.Run("proper usecase create", func(t *testing.T) {
 		require.NoError(t, err)
@@ -60,7 +64,7 @@ const (
 	hashedPassword  = "hashed_password"
 )
 
-func TestRegisterUser(t *testing.T) {
+func TestAuthorization_RegisterUser(t *testing.T) {
 	t.Run("proper create new user", func(t *testing.T) {
 		userID := 1
 		serverMock.hasher.EXPECT().Hash(password).Return(hashedPassword, nil)
@@ -96,7 +100,7 @@ func TestRegisterUser(t *testing.T) {
 	})
 }
 
-func TestLoginUser(t *testing.T) {
+func TestAuthorization_LoginUser(t *testing.T) {
 	user := entity.UserDAO{
 		ID:           1,
 		Login:        login,
@@ -136,5 +140,42 @@ func TestLoginUser(t *testing.T) {
 		token, err := serverMock.uc.LoginUser(login, password)
 		require.Error(t, err)
 		require.Empty(t, token)
+	})
+}
+
+func TestPairs_GetAll(t *testing.T) {
+	userID := 1
+	testPairs := []entity.PairDAO{
+		{
+			UserID:   userID,
+			Login:    "pairTest1",
+			Password: "pairPass",
+			Metadata: `
+tag #1: test-1_1;
+tag #2: test-2_2;`,
+		},
+		{
+			UserID:   userID,
+			Login:    "pairTest2",
+			Password: "pairPass",
+			Metadata: `
+tag #1: test-2_1;
+tag #2: test-2_2;`,
+		},
+	}
+
+	t.Run("get pairs from exist user", func(t *testing.T) {
+		serverMock.repo.EXPECT().GetAllPairs(context.Background(), userID).Return(testPairs, nil)
+		pairs, err := serverMock.uc.ViewAllPairs(userID)
+		require.NoError(t, err)
+		require.NotEmpty(t, pairs)
+		require.IsType(t, []entity.PairDTO{}, pairs)
+	})
+
+	t.Run("get pairs from not exist user", func(t *testing.T) {
+		serverMock.repo.EXPECT().GetAllPairs(context.Background(), userID).Return(nil, errors.New("user_id not exist"))
+		pairs, err := serverMock.uc.ViewAllPairs(userID)
+		require.Error(t, err)
+		require.Empty(t, pairs)
 	})
 }

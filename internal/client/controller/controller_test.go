@@ -13,36 +13,49 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 
-	"github.com/PaulYakow/gophkeeper/cmd/server/config"
-	"github.com/PaulYakow/gophkeeper/internal/server/controller"
+	"github.com/PaulYakow/gophkeeper/internal/client/controller"
 	"github.com/PaulYakow/gophkeeper/internal/server/mocks"
-	"github.com/PaulYakow/gophkeeper/internal/server/usecase"
-	"github.com/PaulYakow/gophkeeper/pkg/logger"
 	pb "github.com/PaulYakow/gophkeeper/proto"
 )
 
-const (
-	bufSize = 1024 * 1024
+var (
+	ctrl *gomock.Controller
+	srv  *mockUserServer
 )
 
-var grpcMock = struct {
-	ctrl *gomock.Controller
-	uc   *usecase.Usecase
+type mockUserServer struct {
+	pb.UnimplementedUserServer
 	auth *mocks.MockIAuthorizationService
-}{}
+}
 
-func mockHelper(t testing.TB) {
-	t.Helper()
-	grpcMock.ctrl = gomock.NewController(t)
+func (s *mockUserServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+	var resp pb.RegisterResponse
+	token, err := s.auth.RegisterUser(req.GetLogin(), req.GetPassword())
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Token = token
+	return &resp, nil
+}
+
+func (s *mockUserServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+	var resp pb.LoginResponse
+	token, err := s.auth.LoginUser(req.GetLogin(), req.GetPassword())
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Token = token
+	return &resp, nil
 }
 
 func dialer() func(context.Context, string) (net.Conn, error) {
-	listener := bufconn.Listen(bufSize)
-	server := grpc.NewServer()
+	listener := bufconn.Listen(1024 * 1024)
 
-	grpcMock.auth = mocks.NewMockIAuthorizationService(grpcMock.ctrl)
-	ctrlUser := controller.New(grpcMock.auth, logger.New("test"), &config.Config{})
-	pb.RegisterUserServer(server, ctrlUser)
+	server := grpc.NewServer()
+	srv = &mockUserServer{auth: mocks.NewMockIAuthorizationService(ctrl)}
+	pb.RegisterUserServer(server, srv)
 
 	go func() {
 		if err := server.Serve(listener); err != nil {
@@ -55,9 +68,14 @@ func dialer() func(context.Context, string) (net.Conn, error) {
 	}
 }
 
+func mockHelper(t testing.TB) {
+	t.Helper()
+	ctrl = gomock.NewController(t)
+}
+
 func TestRegister(t *testing.T) {
 	mockHelper(t)
-	defer grpcMock.ctrl.Finish()
+	defer ctrl.Finish()
 
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(dialer()), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -66,31 +84,30 @@ func TestRegister(t *testing.T) {
 	}
 	defer conn.Close()
 
-	client := pb.NewUserClient(conn)
+	client := controller.NewUserClient(conn)
 
 	login, password := "user", "password"
 	token := "token"
 
 	t.Run("proper register", func(t *testing.T) {
-		grpcMock.auth.EXPECT().RegisterUser(login, password).Return(token, nil)
-		resp, err := client.Register(ctx, &pb.RegisterRequest{Login: login, Password: password})
+		srv.auth.EXPECT().RegisterUser(login, password).Return(token, nil)
+		resp, err := client.Register(ctx, login, password)
+		require.Equal(t, token, resp)
 		require.NoError(t, err)
-		require.Equal(t, token, resp.Token)
-		require.Empty(t, resp.Error)
 	})
 
 	t.Run("fail register", func(t *testing.T) {
 		errFail := errors.New("fail")
-		grpcMock.auth.EXPECT().RegisterUser(login, password).Return("", errFail)
-		resp, err := client.Register(ctx, &pb.RegisterRequest{Login: login, Password: password})
-		require.Error(t, err)
+		srv.auth.EXPECT().RegisterUser(login, password).Return("", errFail)
+		resp, err := client.Register(ctx, login, password)
 		require.Empty(t, resp)
+		require.Error(t, err)
 	})
 }
 
 func TestLogin(t *testing.T) {
 	mockHelper(t)
-	defer grpcMock.ctrl.Finish()
+	defer ctrl.Finish()
 
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(dialer()), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -99,24 +116,23 @@ func TestLogin(t *testing.T) {
 	}
 	defer conn.Close()
 
-	client := pb.NewUserClient(conn)
+	client := controller.NewUserClient(conn)
 
 	login, password := "user", "password"
 	token := "token"
 
 	t.Run("proper login", func(t *testing.T) {
-		grpcMock.auth.EXPECT().LoginUser(login, password).Return(token, nil)
-		resp, err := client.Login(ctx, &pb.LoginRequest{Login: login, Password: password})
+		srv.auth.EXPECT().LoginUser(login, password).Return(token, nil)
+		resp, err := client.Login(ctx, login, password)
+		require.Equal(t, token, resp)
 		require.NoError(t, err)
-		require.Equal(t, token, resp.Token)
-		require.Empty(t, resp.Error)
 	})
 
 	t.Run("fail login", func(t *testing.T) {
 		errFail := errors.New("fail")
-		grpcMock.auth.EXPECT().LoginUser(login, password).Return("", errFail)
-		resp, err := client.Login(ctx, &pb.LoginRequest{Login: login, Password: password})
-		require.Error(t, err)
+		srv.auth.EXPECT().LoginUser(login, password).Return("", errFail)
+		resp, err := client.Login(ctx, login, password)
 		require.Empty(t, resp)
+		require.Error(t, err)
 	})
 }

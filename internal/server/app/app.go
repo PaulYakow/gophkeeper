@@ -19,33 +19,27 @@ import (
 
 // App основная структура приложения (сервера).
 type App struct {
-	config *config.Config
-	logger *logger.Logger
-
-	// todo: потенциально это выделится в отдельную структуру Repo с вложением соответствующих интерфейсов
-	// (но возможно это будет в самом модуле repo)
-	repo usecase.IAuthorizationRepo
-
-	// todo: аналогично полю repo (Services)
-	service usecase.IAuthorizationService
+	config  *config.Config
+	logger  *logger.Logger
+	repo    *repo.Repo
+	service usecase.IService
 
 	// todo: по сути это вспомогательные утилиты - можно сделать отдельную структуру
 	// и потом, например a.utils = a.createUtils
 	passwordHasher password.IPasswordHash
 	tokenMaker     token.IMaker
 
-	// todo: выделить более общую структуру
-	grpcSrv *controller.UserServer
+	grpcSrv *controller.Controller
 }
 
 // New собирает сервер из слоёв (хранилище, сервисы, логика, контроллер).
-func New(cfg *config.Config) (a *App) {
+func New(cfg *config.Config) *App {
 	var err error
 
 	// Config + Logger + Password hasher
-	a = &App{
+	a := &App{
 		config:         cfg,
-		logger:         logger.New("server"),
+		logger:         logger.New(cfg.App.Name),
 		passwordHasher: password.New(),
 	}
 
@@ -59,7 +53,9 @@ func New(cfg *config.Config) (a *App) {
 	}
 
 	// Usecase
-	a.service, err = usecase.New(a.repo, a.passwordHasher, a.tokenMaker)
+	auth := usecase.NewAuthService(a.repo, a.passwordHasher, a.tokenMaker)
+	pairs := usecase.NewPairsService(a.repo)
+	a.service, err = usecase.New(auth, pairs)
 	if err != nil {
 		a.logger.Fatal(fmt.Errorf("create service: %w", err))
 	}
@@ -67,7 +63,7 @@ func New(cfg *config.Config) (a *App) {
 	// Controller
 	a.grpcSrv = controller.New(a.service, a.logger, cfg)
 
-	return
+	return a
 }
 
 // Run - запуск сервера.
@@ -87,7 +83,7 @@ func (a *App) Run() {
 
 	// Shutdown
 	if err := a.repo.CloseConnection(); err != nil {
-		a.logger.Error(fmt.Errorf("Run - close connection to repo: %w", err))
+		a.logger.Error(fmt.Errorf("run - close connection to repo: %w", err))
 	}
 }
 
@@ -101,7 +97,10 @@ func (a *App) createPostgresRepo() (r *repo.Repo) {
 
 	a.logger.Info("PostgreSQL connection ok")
 
-	r, err = repo.New(pg)
+	auth := repo.NewAuthPostgres(pg)
+	pairs := repo.NewPairPostgres(pg)
+
+	r, err = repo.New(pg, auth, pairs)
 	if err != nil {
 		a.logger.Fatal(fmt.Errorf("Run - repo.New: %w", err))
 	}

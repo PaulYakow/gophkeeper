@@ -46,6 +46,7 @@ type (
 func New() (*Config, error) {
 	cfg := &Config{}
 
+	// todo: Переделать на флаг!
 	err := cleanenv.ReadConfig("./cmd/server/config/config.yaml", cfg)
 	if err != nil {
 		return nil, fmt.Errorf("config error: %w", err)

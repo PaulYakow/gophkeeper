@@ -5,11 +5,95 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	entity "github.com/PaulYakow/gophkeeper/internal/entity"
 	gomock "github.com/golang/mock/gomock"
 )
+
+// MockIService is a mock of IService interface.
+type MockIService struct {
+	ctrl     *gomock.Controller
+	recorder *MockIServiceMockRecorder
+}
+
+// MockIServiceMockRecorder is the mock recorder for MockIService.
+type MockIServiceMockRecorder struct {
+	mock *MockIService
+}
+
+// NewMockIService creates a new mock instance.
+func NewMockIService(ctrl *gomock.Controller) *MockIService {
+	mock := &MockIService{ctrl: ctrl}
+	mock.recorder = &MockIServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
+	return m.recorder
+}
+
+// LoginUser mocks base method.
+func (m *MockIService) LoginUser(login, password string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoginUser", login, password)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LoginUser indicates an expected call of LoginUser.
+func (mr *MockIServiceMockRecorder) LoginUser(login, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginUser", reflect.TypeOf((*MockIService)(nil).LoginUser), login, password)
+}
+
+// ParseToken mocks base method.
+func (m *MockIService) ParseToken(token string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseToken", token)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseToken indicates an expected call of ParseToken.
+func (mr *MockIServiceMockRecorder) ParseToken(token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockIService)(nil).ParseToken), token)
+}
+
+// RegisterUser mocks base method.
+func (m *MockIService) RegisterUser(login, password string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterUser", login, password)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterUser indicates an expected call of RegisterUser.
+func (mr *MockIServiceMockRecorder) RegisterUser(login, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUser", reflect.TypeOf((*MockIService)(nil).RegisterUser), login, password)
+}
+
+// ViewAllPairs mocks base method.
+func (m *MockIService) ViewAllPairs(userID int) ([]entity.PairDTO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewAllPairs", userID)
+	ret0, _ := ret[0].([]entity.PairDTO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewAllPairs indicates an expected call of ViewAllPairs.
+func (mr *MockIServiceMockRecorder) ViewAllPairs(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllPairs", reflect.TypeOf((*MockIService)(nil).ViewAllPairs), userID)
+}
 
 // MockIAuthorizationService is a mock of IAuthorizationService interface.
 type MockIAuthorizationService struct {
@@ -49,6 +133,21 @@ func (mr *MockIAuthorizationServiceMockRecorder) LoginUser(login, password inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginUser", reflect.TypeOf((*MockIAuthorizationService)(nil).LoginUser), login, password)
 }
 
+// ParseToken mocks base method.
+func (m *MockIAuthorizationService) ParseToken(token string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseToken", token)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseToken indicates an expected call of ParseToken.
+func (mr *MockIAuthorizationServiceMockRecorder) ParseToken(token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockIAuthorizationService)(nil).ParseToken), token)
+}
+
 // RegisterUser mocks base method.
 func (m *MockIAuthorizationService) RegisterUser(login, password string) (string, error) {
 	m.ctrl.T.Helper()
@@ -62,6 +161,126 @@ func (m *MockIAuthorizationService) RegisterUser(login, password string) (string
 func (mr *MockIAuthorizationServiceMockRecorder) RegisterUser(login, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUser", reflect.TypeOf((*MockIAuthorizationService)(nil).RegisterUser), login, password)
+}
+
+// MockIPairsService is a mock of IPairsService interface.
+type MockIPairsService struct {
+	ctrl     *gomock.Controller
+	recorder *MockIPairsServiceMockRecorder
+}
+
+// MockIPairsServiceMockRecorder is the mock recorder for MockIPairsService.
+type MockIPairsServiceMockRecorder struct {
+	mock *MockIPairsService
+}
+
+// NewMockIPairsService creates a new mock instance.
+func NewMockIPairsService(ctrl *gomock.Controller) *MockIPairsService {
+	mock := &MockIPairsService{ctrl: ctrl}
+	mock.recorder = &MockIPairsServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIPairsService) EXPECT() *MockIPairsServiceMockRecorder {
+	return m.recorder
+}
+
+// ViewAllPairs mocks base method.
+func (m *MockIPairsService) ViewAllPairs(userID int) ([]entity.PairDTO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewAllPairs", userID)
+	ret0, _ := ret[0].([]entity.PairDTO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewAllPairs indicates an expected call of ViewAllPairs.
+func (mr *MockIPairsServiceMockRecorder) ViewAllPairs(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllPairs", reflect.TypeOf((*MockIPairsService)(nil).ViewAllPairs), userID)
+}
+
+// MockIRepo is a mock of IRepo interface.
+type MockIRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockIRepoMockRecorder
+}
+
+// MockIRepoMockRecorder is the mock recorder for MockIRepo.
+type MockIRepoMockRecorder struct {
+	mock *MockIRepo
+}
+
+// NewMockIRepo creates a new mock instance.
+func NewMockIRepo(ctrl *gomock.Controller) *MockIRepo {
+	mock := &MockIRepo{ctrl: ctrl}
+	mock.recorder = &MockIRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIRepo) EXPECT() *MockIRepoMockRecorder {
+	return m.recorder
+}
+
+// CloseConnection mocks base method.
+func (m *MockIRepo) CloseConnection() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloseConnection")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CloseConnection indicates an expected call of CloseConnection.
+func (mr *MockIRepoMockRecorder) CloseConnection() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseConnection", reflect.TypeOf((*MockIRepo)(nil).CloseConnection))
+}
+
+// CreateUser mocks base method.
+func (m *MockIRepo) CreateUser(login, passwordHash string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUser", login, passwordHash)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateUser indicates an expected call of CreateUser.
+func (mr *MockIRepoMockRecorder) CreateUser(login, passwordHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockIRepo)(nil).CreateUser), login, passwordHash)
+}
+
+// GetAllPairs mocks base method.
+func (m *MockIRepo) GetAllPairs(ctx context.Context, userID int) ([]entity.PairDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllPairs", ctx, userID)
+	ret0, _ := ret[0].([]entity.PairDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllPairs indicates an expected call of GetAllPairs.
+func (mr *MockIRepoMockRecorder) GetAllPairs(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllPairs", reflect.TypeOf((*MockIRepo)(nil).GetAllPairs), ctx, userID)
+}
+
+// GetUser mocks base method.
+func (m *MockIRepo) GetUser(login string) (entity.UserDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUser", login)
+	ret0, _ := ret[0].(entity.UserDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUser indicates an expected call of GetUser.
+func (mr *MockIRepoMockRecorder) GetUser(login interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockIRepo)(nil).GetUser), login)
 }
 
 // MockIAuthorizationRepo is a mock of IAuthorizationRepo interface.
@@ -85,20 +304,6 @@ func NewMockIAuthorizationRepo(ctrl *gomock.Controller) *MockIAuthorizationRepo 
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockIAuthorizationRepo) EXPECT() *MockIAuthorizationRepoMockRecorder {
 	return m.recorder
-}
-
-// CloseConnection mocks base method.
-func (m *MockIAuthorizationRepo) CloseConnection() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseConnection")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CloseConnection indicates an expected call of CloseConnection.
-func (mr *MockIAuthorizationRepoMockRecorder) CloseConnection() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseConnection", reflect.TypeOf((*MockIAuthorizationRepo)(nil).CloseConnection))
 }
 
 // CreateUser mocks base method.
@@ -129,4 +334,42 @@ func (m *MockIAuthorizationRepo) GetUser(login string) (entity.UserDAO, error) {
 func (mr *MockIAuthorizationRepoMockRecorder) GetUser(login interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockIAuthorizationRepo)(nil).GetUser), login)
+}
+
+// MockIPairsRepo is a mock of IPairsRepo interface.
+type MockIPairsRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockIPairsRepoMockRecorder
+}
+
+// MockIPairsRepoMockRecorder is the mock recorder for MockIPairsRepo.
+type MockIPairsRepoMockRecorder struct {
+	mock *MockIPairsRepo
+}
+
+// NewMockIPairsRepo creates a new mock instance.
+func NewMockIPairsRepo(ctrl *gomock.Controller) *MockIPairsRepo {
+	mock := &MockIPairsRepo{ctrl: ctrl}
+	mock.recorder = &MockIPairsRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIPairsRepo) EXPECT() *MockIPairsRepoMockRecorder {
+	return m.recorder
+}
+
+// GetAllPairs mocks base method.
+func (m *MockIPairsRepo) GetAllPairs(ctx context.Context, userID int) ([]entity.PairDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllPairs", ctx, userID)
+	ret0, _ := ret[0].([]entity.PairDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllPairs indicates an expected call of GetAllPairs.
+func (mr *MockIPairsRepoMockRecorder) GetAllPairs(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllPairs", reflect.TypeOf((*MockIPairsRepo)(nil).GetAllPairs), ctx, userID)
 }

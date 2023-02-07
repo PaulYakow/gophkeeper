@@ -1,0 +1,10 @@
+app:
+  name: 'gophkeeper-client'
+  version: '1.0.0'
+
+storage:
+  path: '/tmp/gophkeeper/'
+
+grpc:
+  address: 'localhost'
+  port: '9090'

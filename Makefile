@@ -10,5 +10,6 @@ lint:
 	gofumpt -d .
 	golangci-lint run
 
+#Пример использования: make grpc_test name=user
 grpc_test:
-	grpcui -proto ./proto/user.proto -plaintext localhost:9090
+	grpcui -proto ./proto/$(name).proto -plaintext localhost:9090

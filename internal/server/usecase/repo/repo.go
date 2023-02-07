@@ -6,28 +6,28 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/PaulYakow/gophkeeper/internal/entity"
+	"github.com/PaulYakow/gophkeeper/internal/server/usecase"
 	"github.com/PaulYakow/gophkeeper/pkg/postgres"
 )
 
 const (
 	schema = `
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE IF NOT EXISTS public.users
 (
     id            SERIAL PRIMARY KEY,
     login         VARCHAR NOT NULL UNIQUE,
     password_hash VARCHAR NOT NULL
 );
-`
-	createUser = `
-INSERT INTO users (login, password_hash)
-VALUES ($1, $2)
-RETURNING id;
-`
-	getUser = `
-SELECT *
-FROM users
-WHERE login=$1;
+
+CREATE TABLE IF NOT EXISTS public.pairs
+(
+    id         SERIAL PRIMARY KEY,
+    user_id	   INT REFERENCES public.users (id) ON DELETE CASCADE,
+    login      VARCHAR NOT NULL,
+    password   VARCHAR NOT NULL,
+    metadata   TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
 `
 )
 
@@ -35,57 +35,29 @@ WHERE login=$1;
 //
 // Содержит реализации необходимых интерфейсов (IAuthorizationRepo, ...).
 type Repo struct {
-	*postgres.Postgres
+	db *postgres.Postgres
+	usecase.IAuthorizationRepo
+	usecase.IPairsRepo
 }
 
 // New создаёт объект Repo.
-func New(pg *postgres.Postgres) (*Repo, error) {
+func New(db *postgres.Postgres, auth usecase.IAuthorizationRepo, pairs usecase.IPairsRepo) (*Repo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	_, err := pg.ExecContext(ctx, schema)
+	_, err := db.ExecContext(ctx, schema)
 	if err != nil {
 		return nil, fmt.Errorf("repo - create table failed: %w", err)
 	}
 
-	return &Repo{pg}, nil
+	return &Repo{
+		db,
+		auth,
+		pairs,
+	}, nil
 }
-
-// todo: переместится в 'user.go' и свой интерфейс в 'interfaces.go' ==>
-// (аналогично остальные интерфейсы в свои файлы размещать)
-
-// CreateUser - создание пользователя с заданными логином и хэшем пароля.
-//
-// Возвращает id пользователя или ошибку (если логин уже существует).
-func (s *Repo) CreateUser(login, passwordHash string) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-
-	var id int
-	err := s.GetContext(ctx, &id, createUser, login, passwordHash)
-	if err != nil {
-		return 0, err
-	}
-
-	return id, nil
-}
-
-// GetUser - находит пользователя в БД по логину.
-//
-// Возвращает объект пользователя или ошибку (при отсутствии логина).
-func (s *Repo) GetUser(login string) (entity.UserDAO, error) {
-	var user entity.UserDAO
-	err := s.Get(&user, getUser, login)
-	return user, err
-}
-
-// <==
-
-// todo: должно остаться в данной структуре ==>
 
 // CloseConnection - дожидается завершения запросов и закрывает все открытые соединения.
 func (s *Repo) CloseConnection() error {
-	return s.Shutdown()
+	return s.db.Shutdown()
 }
-
-// <==
