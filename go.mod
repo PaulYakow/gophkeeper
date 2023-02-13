@@ -3,12 +3,14 @@ module github.com/PaulYakow/gophkeeper
 go 1.19
 
 require (
+	github.com/gdamore/tcell/v2 v2.5.3
 	github.com/golang/mock v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.4.2
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/o1egl/paseto v1.0.0
 	github.com/rivo/tview v0.0.0-20230130130022-4a1b7a76c01c
+	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.5.0
@@ -24,7 +26,6 @@ require (
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
-	github.com/gdamore/tcell/v2 v2.5.3 // indirect
 	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect

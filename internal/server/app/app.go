@@ -52,10 +52,13 @@ func New(cfg *config.Config) *App {
 		a.logger.Fatal(fmt.Errorf("create token maker: %w", err))
 	}
 
-	// Usecase
+	// Usecases
 	auth := usecase.NewAuthService(a.repo, a.passwordHasher, a.tokenMaker)
 	pairs := usecase.NewPairsService(a.repo)
-	a.service, err = usecase.New(auth, pairs)
+	cards := usecase.NewBankService(a.repo)
+	notes := usecase.NewTextService(a.repo)
+
+	a.service, err = usecase.New(auth, pairs, cards, notes)
 	if err != nil {
 		a.logger.Fatal(fmt.Errorf("create service: %w", err))
 	}
@@ -99,8 +102,10 @@ func (a *App) createPostgresRepo() (r *repo.Repo) {
 
 	auth := repo.NewAuthPostgres(pg)
 	pairs := repo.NewPairPostgres(pg)
+	cards := repo.NewBankPostgres(pg)
+	notes := repo.NewTextPostgres(pg)
 
-	r, err = repo.New(pg, auth, pairs)
+	r, err = repo.New(pg, auth, pairs, cards, notes)
 	if err != nil {
 		a.logger.Fatal(fmt.Errorf("Run - repo.New: %w", err))
 	}

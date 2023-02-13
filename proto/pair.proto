@@ -4,7 +4,7 @@ package proto;
 
 option go_package = "gophkeeper/proto";
 
-message GetAllRequest {
+message GetAllPairsRequest {
   string token = 1;
 }
 
@@ -15,11 +15,11 @@ message PairMsg {
   string metadata = 4;
 }
 
-message GetAllResponse {
+message GetAllPairsResponse {
   repeated PairMsg pairs = 1;
   string error = 2;
 }
 
 service Pair {
-  rpc GetAll(GetAllRequest) returns (GetAllResponse);
+  rpc GetAll(GetAllPairsRequest) returns (GetAllPairsResponse);
 }

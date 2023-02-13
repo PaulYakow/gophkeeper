@@ -36,7 +36,7 @@ func New(cfg *config.Config) (a *App) {
 	}
 
 	a.ctrl = controller.New(a.conn)
-	a.view = views.New(a.ctrl)
+	a.view = views.New(a.ctrl, cfg)
 
 	return
 }

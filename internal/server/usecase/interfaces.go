@@ -13,6 +13,8 @@ type (
 	IService interface {
 		IAuthorizationService
 		IPairsService
+		IBankService
+		ITextService
 	}
 
 	// IAuthorizationService абстракция сервиса авторизации.
@@ -39,10 +41,24 @@ type (
 		ViewAllPairs(userID int) ([]entity.PairDTO, error)
 	}
 
+	// IBankService абстракция сервиса доступа к банковским картам.
+	IBankService interface {
+		// ViewAllCards получение всех значений банковских карт.
+		ViewAllCards(userID int) ([]entity.BankDTO, error)
+	}
+
+	// ITextService абстракция сервиса доступа к заметкам.
+	ITextService interface {
+		// ViewAllNotes получение всех значений заметок.
+		ViewAllNotes(userID int) ([]entity.TextDTO, error)
+	}
+
 	// IRepo общая абстракция для взаимодействия с хранилищем.
 	IRepo interface {
 		IAuthorizationRepo
 		IPairsRepo
+		IBankRepo
+		ITextRepo
 		CloseConnection() error
 	}
 
@@ -63,5 +79,16 @@ type (
 	IPairsRepo interface {
 		// GetAllPairs находит в БД все записи типа логин/пароль принадлежащие конкретному пользователю (userID).
 		GetAllPairs(ctx context.Context, userID int) ([]entity.PairDAO, error)
+	}
+
+	// IBankRepo абстракция взаимодействия с частью хранилища отвечающей за хранение банковских данных о картах.
+	IBankRepo interface {
+		// GetAllCards находит в БД все записи банковских карт принадлежащие конкретному пользователю (userID).
+		GetAllCards(ctx context.Context, userID int) ([]entity.BankDAO, error)
+	}
+
+	ITextRepo interface {
+		// GetAllNotes абстракция взаимодействия с частью хранилища отвечающей за хранение заметок.
+		GetAllNotes(ctx context.Context, userID int) ([]entity.TextDAO, error)
 	}
 )

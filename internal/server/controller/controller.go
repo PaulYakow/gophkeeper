@@ -44,12 +44,14 @@ func (c *Controller) Run() {
 			c.logger.Fatal(fmt.Errorf("gRPC - net.Listen: %w", err))
 		}
 
-		// создаём gRPC-сервер без зарегистрированной службы
+		// создаём gRPC-сервер
 		grpcSrv := grpc.NewServer(grpc.UnaryInterceptor(c.userIdentity))
 
 		// регистрируем сервисы
 		pb.RegisterUserServer(grpcSrv, NewUserServer(c.service))
 		pb.RegisterPairServer(grpcSrv, NewPairsServer(c.service))
+		pb.RegisterBankServer(grpcSrv, NewBankServer(c.service))
+		pb.RegisterTextServer(grpcSrv, NewTextServer(c.service))
 
 		c.logger.Info("gRPC run: %s", c.port)
 

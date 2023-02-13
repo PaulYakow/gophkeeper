@@ -11,19 +11,22 @@ import (
 	pb "github.com/PaulYakow/gophkeeper/proto"
 )
 
+// PairsClient обеспечивает обмен данными о сохранённых парах логин/пароль пользователя.
 type PairsClient struct {
 	conn *grpc.ClientConn
 }
 
+// NewPairsClient создаёт объект PairsClient.
 func NewPairsClient(conn *grpc.ClientConn) *PairsClient {
 	return &PairsClient{
 		conn: conn,
 	}
 }
 
+// ViewAllPairs запрашивает информацию обо всех имеющихся парах логин/пароль пользователя.
 func (c *PairsClient) ViewAllPairs(ctx context.Context, token string) ([]entity.PairDTO, error) {
 	client := pb.NewPairClient(c.conn)
-	req := &pb.GetAllRequest{
+	req := &pb.GetAllPairsRequest{
 		Token: "",
 	}
 

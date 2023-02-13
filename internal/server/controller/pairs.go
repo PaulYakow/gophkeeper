@@ -23,8 +23,8 @@ func NewPairsServer(pairs usecase.IPairsService) *PairServer {
 }
 
 // GetAll - получение всех значений пар логин/пароль.
-func (s *PairServer) GetAll(ctx context.Context, req *pb.GetAllRequest) (*pb.GetAllResponse, error) {
-	var resp pb.GetAllResponse
+func (s *PairServer) GetAll(ctx context.Context, req *pb.GetAllPairsRequest) (*pb.GetAllPairsResponse, error) {
+	var resp pb.GetAllPairsResponse
 
 	userID, ok := ctx.Value(userIDKey).(int)
 	if !ok {

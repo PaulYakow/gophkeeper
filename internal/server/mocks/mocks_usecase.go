@@ -80,6 +80,36 @@ func (mr *MockIServiceMockRecorder) RegisterUser(login, password interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUser", reflect.TypeOf((*MockIService)(nil).RegisterUser), login, password)
 }
 
+// ViewAllCards mocks base method.
+func (m *MockIService) ViewAllCards(userID int) ([]entity.BankDTO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewAllCards", userID)
+	ret0, _ := ret[0].([]entity.BankDTO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewAllCards indicates an expected call of ViewAllCards.
+func (mr *MockIServiceMockRecorder) ViewAllCards(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllCards", reflect.TypeOf((*MockIService)(nil).ViewAllCards), userID)
+}
+
+// ViewAllNotes mocks base method.
+func (m *MockIService) ViewAllNotes(userID int) ([]entity.TextDTO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewAllNotes", userID)
+	ret0, _ := ret[0].([]entity.TextDTO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewAllNotes indicates an expected call of ViewAllNotes.
+func (mr *MockIServiceMockRecorder) ViewAllNotes(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllNotes", reflect.TypeOf((*MockIService)(nil).ViewAllNotes), userID)
+}
+
 // ViewAllPairs mocks base method.
 func (m *MockIService) ViewAllPairs(userID int) ([]entity.PairDTO, error) {
 	m.ctrl.T.Helper()
@@ -201,6 +231,82 @@ func (mr *MockIPairsServiceMockRecorder) ViewAllPairs(userID interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllPairs", reflect.TypeOf((*MockIPairsService)(nil).ViewAllPairs), userID)
 }
 
+// MockIBankService is a mock of IBankService interface.
+type MockIBankService struct {
+	ctrl     *gomock.Controller
+	recorder *MockIBankServiceMockRecorder
+}
+
+// MockIBankServiceMockRecorder is the mock recorder for MockIBankService.
+type MockIBankServiceMockRecorder struct {
+	mock *MockIBankService
+}
+
+// NewMockIBankService creates a new mock instance.
+func NewMockIBankService(ctrl *gomock.Controller) *MockIBankService {
+	mock := &MockIBankService{ctrl: ctrl}
+	mock.recorder = &MockIBankServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIBankService) EXPECT() *MockIBankServiceMockRecorder {
+	return m.recorder
+}
+
+// ViewAllCards mocks base method.
+func (m *MockIBankService) ViewAllCards(userID int) ([]entity.BankDTO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewAllCards", userID)
+	ret0, _ := ret[0].([]entity.BankDTO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewAllCards indicates an expected call of ViewAllCards.
+func (mr *MockIBankServiceMockRecorder) ViewAllCards(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllCards", reflect.TypeOf((*MockIBankService)(nil).ViewAllCards), userID)
+}
+
+// MockITextService is a mock of ITextService interface.
+type MockITextService struct {
+	ctrl     *gomock.Controller
+	recorder *MockITextServiceMockRecorder
+}
+
+// MockITextServiceMockRecorder is the mock recorder for MockITextService.
+type MockITextServiceMockRecorder struct {
+	mock *MockITextService
+}
+
+// NewMockITextService creates a new mock instance.
+func NewMockITextService(ctrl *gomock.Controller) *MockITextService {
+	mock := &MockITextService{ctrl: ctrl}
+	mock.recorder = &MockITextServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockITextService) EXPECT() *MockITextServiceMockRecorder {
+	return m.recorder
+}
+
+// ViewAllNotes mocks base method.
+func (m *MockITextService) ViewAllNotes(userID int) ([]entity.TextDTO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewAllNotes", userID)
+	ret0, _ := ret[0].([]entity.TextDTO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewAllNotes indicates an expected call of ViewAllNotes.
+func (mr *MockITextServiceMockRecorder) ViewAllNotes(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewAllNotes", reflect.TypeOf((*MockITextService)(nil).ViewAllNotes), userID)
+}
+
 // MockIRepo is a mock of IRepo interface.
 type MockIRepo struct {
 	ctrl     *gomock.Controller
@@ -251,6 +357,36 @@ func (m *MockIRepo) CreateUser(login, passwordHash string) (int, error) {
 func (mr *MockIRepoMockRecorder) CreateUser(login, passwordHash interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockIRepo)(nil).CreateUser), login, passwordHash)
+}
+
+// GetAllCards mocks base method.
+func (m *MockIRepo) GetAllCards(ctx context.Context, userID int) ([]entity.BankDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllCards", ctx, userID)
+	ret0, _ := ret[0].([]entity.BankDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllCards indicates an expected call of GetAllCards.
+func (mr *MockIRepoMockRecorder) GetAllCards(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCards", reflect.TypeOf((*MockIRepo)(nil).GetAllCards), ctx, userID)
+}
+
+// GetAllNotes mocks base method.
+func (m *MockIRepo) GetAllNotes(ctx context.Context, userID int) ([]entity.TextDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllNotes", ctx, userID)
+	ret0, _ := ret[0].([]entity.TextDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllNotes indicates an expected call of GetAllNotes.
+func (mr *MockIRepoMockRecorder) GetAllNotes(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllNotes", reflect.TypeOf((*MockIRepo)(nil).GetAllNotes), ctx, userID)
 }
 
 // GetAllPairs mocks base method.
@@ -372,4 +508,80 @@ func (m *MockIPairsRepo) GetAllPairs(ctx context.Context, userID int) ([]entity.
 func (mr *MockIPairsRepoMockRecorder) GetAllPairs(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllPairs", reflect.TypeOf((*MockIPairsRepo)(nil).GetAllPairs), ctx, userID)
+}
+
+// MockIBankRepo is a mock of IBankRepo interface.
+type MockIBankRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockIBankRepoMockRecorder
+}
+
+// MockIBankRepoMockRecorder is the mock recorder for MockIBankRepo.
+type MockIBankRepoMockRecorder struct {
+	mock *MockIBankRepo
+}
+
+// NewMockIBankRepo creates a new mock instance.
+func NewMockIBankRepo(ctrl *gomock.Controller) *MockIBankRepo {
+	mock := &MockIBankRepo{ctrl: ctrl}
+	mock.recorder = &MockIBankRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIBankRepo) EXPECT() *MockIBankRepoMockRecorder {
+	return m.recorder
+}
+
+// GetAllCards mocks base method.
+func (m *MockIBankRepo) GetAllCards(ctx context.Context, userID int) ([]entity.BankDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllCards", ctx, userID)
+	ret0, _ := ret[0].([]entity.BankDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllCards indicates an expected call of GetAllCards.
+func (mr *MockIBankRepoMockRecorder) GetAllCards(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCards", reflect.TypeOf((*MockIBankRepo)(nil).GetAllCards), ctx, userID)
+}
+
+// MockITextRepo is a mock of ITextRepo interface.
+type MockITextRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockITextRepoMockRecorder
+}
+
+// MockITextRepoMockRecorder is the mock recorder for MockITextRepo.
+type MockITextRepoMockRecorder struct {
+	mock *MockITextRepo
+}
+
+// NewMockITextRepo creates a new mock instance.
+func NewMockITextRepo(ctrl *gomock.Controller) *MockITextRepo {
+	mock := &MockITextRepo{ctrl: ctrl}
+	mock.recorder = &MockITextRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockITextRepo) EXPECT() *MockITextRepoMockRecorder {
+	return m.recorder
+}
+
+// GetAllNotes mocks base method.
+func (m *MockITextRepo) GetAllNotes(ctx context.Context, userID int) ([]entity.TextDAO, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllNotes", ctx, userID)
+	ret0, _ := ret[0].([]entity.TextDAO)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllNotes indicates an expected call of GetAllNotes.
+func (mr *MockITextRepoMockRecorder) GetAllNotes(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllNotes", reflect.TypeOf((*MockITextRepo)(nil).GetAllNotes), ctx, userID)
 }

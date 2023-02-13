@@ -17,7 +17,9 @@ import (
 
 const (
 	qDropTables = `
-DROP TABLE IF EXISTS public.pairs;
+DROP TABLE IF EXISTS resources.pairs_data;
+DROP TABLE IF EXISTS resources.bank_data;
+DROP TABLE IF EXISTS resources.text_data;
 DROP TABLE IF EXISTS public.users;
 `
 	qCreateUser = `
@@ -26,8 +28,20 @@ VALUES ($1, $2)
 RETURNING id;
 `
 	qCreatePair = `
-INSERT INTO public.pairs (user_id, login, password, metadata)
+INSERT INTO resources.pairs_data (user_id, login, password, metadata)
 VALUES ($1, $2, $3, $4)
+RETURNING id;
+`
+
+	qCreateCard = `
+INSERT INTO resources.bank_data (user_id, card_holder, number, expiration_date, metadata)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id;
+`
+
+	qCreateNote = `
+INSERT INTO resources.text_data (user_id, note, metadata)
+VALUES ($1, $2, $3)
 RETURNING id;
 `
 )
@@ -62,6 +76,38 @@ tag #1: test-2_1;
 tag #2: test-2_2;`,
 		},
 	}
+
+	testCards = []entity.BankDAO{
+		{
+			CardHolder:     "Ivanov Ivan",
+			Number:         "1234 0987 5678 6543",
+			ExpirationDate: "09/99",
+			Metadata: `
+tag #1: test bank 1-1;
+tag #2: test bank 1-2;`,
+		},
+		{
+			CardHolder:     "Petrov Petr",
+			Number:         "0987 1234 6543 5678",
+			ExpirationDate: "01/11",
+			Metadata: `
+tag #1: test bank 2-1;
+tag #2: test bank 2-2;`,
+		},
+	}
+
+	testNotes = []entity.TextDAO{
+		{
+			Note: "some text from user",
+			Metadata: `tag #1: test text 1-1;
+tag #2: test text 1-2;`,
+		},
+		{
+			Note: "another text from user",
+			Metadata: `tag #1: test text 1-1;
+tag #2: test text 1-2;`,
+		},
+	}
 )
 
 // Подготовка тестовой БД
@@ -82,6 +128,7 @@ func teardown() {
 	_, err := testDB.Exec(qDropTables)
 	if err != nil {
 		log.Println(fmt.Errorf("fail drop repo: %w", err))
+		return
 	}
 
 	log.Println("clean repo")
@@ -96,8 +143,10 @@ func TestMain(m *testing.M) {
 
 	auth := repo.NewAuthPostgres(testDB)
 	pairs := repo.NewPairPostgres(testDB)
+	cards := repo.NewBankPostgres(testDB)
+	notes := repo.NewTextPostgres(testDB)
 
-	testRepo, err = repo.New(testDB, auth, pairs)
+	testRepo, err = repo.New(testDB, auth, pairs, cards, notes)
 	if err != nil {
 		log.Println(fmt.Errorf("repo tests - repo.New: %w", err))
 	}
@@ -114,6 +163,26 @@ func TestMain(m *testing.M) {
 			userDAO.ID, testPairs[i].Login, testPairs[i].Password, testPairs[i].Metadata)
 		if err != nil {
 			log.Println(fmt.Errorf("repo tests - fail create pair: %w", err))
+			code = 1
+		}
+	}
+
+	for i := range testCards {
+		err = testDB.Get(&testCards[i].ID,
+			qCreateCard,
+			userDAO.ID, testCards[i].CardHolder, testCards[i].Number, testCards[i].ExpirationDate, testCards[i].Metadata)
+		if err != nil {
+			log.Println(fmt.Errorf("repo tests - fail create card: %w", err))
+			code = 1
+		}
+	}
+
+	for i := range testNotes {
+		err = testDB.Get(&testNotes[i].ID,
+			qCreateNote,
+			userDAO.ID, testNotes[i].Note, testNotes[i].Metadata)
+		if err != nil {
+			log.Println(fmt.Errorf("repo tests - fail create note: %w", err))
 			code = 1
 		}
 	}
@@ -179,5 +248,47 @@ func TestPairs_GetAll(t *testing.T) {
 		pairs, err := testRepo.GetAllPairs(context.Background(), 777)
 		require.NoError(t, err)
 		require.Empty(t, pairs)
+	})
+}
+
+func TestCards_GetAll(t *testing.T) {
+	t.Run("get exist cards", func(t *testing.T) {
+		cards, err := testRepo.GetAllCards(context.Background(), userDAO.ID)
+		require.NoError(t, err)
+		require.IsType(t, []entity.BankDAO{}, cards)
+		require.NotEmpty(t, cards)
+		for i := range cards {
+			require.Equal(t, testCards[i].ID, cards[i].ID)
+			require.Equal(t, testCards[i].CardHolder, cards[i].CardHolder)
+			require.Equal(t, testCards[i].Number, cards[i].Number)
+			require.Equal(t, testCards[i].ExpirationDate, cards[i].ExpirationDate)
+			require.Equal(t, testCards[i].Metadata, cards[i].Metadata)
+		}
+	})
+
+	t.Run("get not exist cards (user_id not exist)", func(t *testing.T) {
+		cards, err := testRepo.GetAllCards(context.Background(), 777)
+		require.NoError(t, err)
+		require.Empty(t, cards)
+	})
+}
+
+func TestNotes_GetAll(t *testing.T) {
+	t.Run("get exist notes", func(t *testing.T) {
+		notes, err := testRepo.GetAllNotes(context.Background(), userDAO.ID)
+		require.NoError(t, err)
+		require.IsType(t, []entity.TextDAO{}, notes)
+		require.NotEmpty(t, notes)
+		for i := range notes {
+			require.Equal(t, testNotes[i].ID, notes[i].ID)
+			require.Equal(t, testNotes[i].Note, notes[i].Note)
+			require.Equal(t, testNotes[i].Metadata, notes[i].Metadata)
+		}
+	})
+
+	t.Run("get not exist notes (user_id not exist)", func(t *testing.T) {
+		notes, err := testRepo.GetAllCards(context.Background(), 777)
+		require.NoError(t, err)
+		require.Empty(t, notes)
 	})
 }

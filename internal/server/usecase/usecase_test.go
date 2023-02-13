@@ -51,7 +51,10 @@ func TestNew(t *testing.T) {
 
 	auth := usecase.NewAuthService(serverMock.repo, serverMock.hasher, serverMock.maker)
 	pairs := usecase.NewPairsService(serverMock.repo)
-	serverMock.uc, err = usecase.New(auth, pairs)
+	cards := usecase.NewBankService(serverMock.repo)
+	notes := usecase.NewTextService(serverMock.repo)
+
+	serverMock.uc, err = usecase.New(auth, pairs, cards, notes)
 
 	t.Run("proper usecase create", func(t *testing.T) {
 		require.NoError(t, err)
@@ -177,5 +180,42 @@ tag #2: test-2_2;`,
 		pairs, err := serverMock.uc.ViewAllPairs(userID)
 		require.Error(t, err)
 		require.Empty(t, pairs)
+	})
+}
+
+func TestBank_GetAll(t *testing.T) {
+	userID := 1
+	testCards := []entity.BankDAO{
+		{
+			CardHolder:     "Ivanov Ivan",
+			Number:         "1234 0987 5678 6543",
+			ExpirationDate: "09/99",
+			Metadata: `
+tag #1: test bank 1-1;
+tag #2: test bank 1-2;`,
+		},
+		{
+			CardHolder:     "Petrov Petr",
+			Number:         "0987 1234 6543 5678",
+			ExpirationDate: "01/11",
+			Metadata: `
+tag #1: test bank 2-1;
+tag #2: test bank 2-2;`,
+		},
+	}
+
+	t.Run("get cards from exist user", func(t *testing.T) {
+		serverMock.repo.EXPECT().GetAllCards(context.Background(), userID).Return(testCards, nil)
+		cards, err := serverMock.uc.ViewAllCards(userID)
+		require.NoError(t, err)
+		require.NotEmpty(t, cards)
+		require.IsType(t, []entity.BankDTO{}, cards)
+	})
+
+	t.Run("get cards from not exist user", func(t *testing.T) {
+		serverMock.repo.EXPECT().GetAllCards(context.Background(), userID).Return(nil, errors.New("user_id not exist"))
+		cards, err := serverMock.uc.ViewAllCards(userID)
+		require.Error(t, err)
+		require.Empty(t, cards)
 	})
 }

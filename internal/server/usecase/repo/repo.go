@@ -12,6 +12,8 @@ import (
 
 const (
 	schema = `
+CREATE SCHEMA IF NOT EXISTS resources;
+
 CREATE TABLE IF NOT EXISTS public.users
 (
     id            SERIAL PRIMARY KEY,
@@ -19,12 +21,32 @@ CREATE TABLE IF NOT EXISTS public.users
     password_hash VARCHAR NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.pairs
+CREATE TABLE IF NOT EXISTS resources.pairs_data
 (
     id         SERIAL PRIMARY KEY,
     user_id	   INT REFERENCES public.users (id) ON DELETE CASCADE,
     login      VARCHAR NOT NULL,
     password   VARCHAR NOT NULL,
+    metadata   TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS resources.bank_data
+(
+    id         SERIAL PRIMARY KEY,
+    user_id	   INT REFERENCES public.users (id) ON DELETE CASCADE,
+	card_holder VARCHAR NOT NULL,
+	number VARCHAR NOT NULL,
+	expiration_date VARCHAR NOT NULL,
+    metadata   TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS resources.text_data
+(
+    id         SERIAL PRIMARY KEY,
+    user_id	   INT REFERENCES public.users (id) ON DELETE CASCADE,
+	note       TEXT,
     metadata   TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
@@ -38,22 +60,31 @@ type Repo struct {
 	db *postgres.Postgres
 	usecase.IAuthorizationRepo
 	usecase.IPairsRepo
+	usecase.IBankRepo
+	usecase.ITextRepo
 }
 
 // New создаёт объект Repo.
-func New(db *postgres.Postgres, auth usecase.IAuthorizationRepo, pairs usecase.IPairsRepo) (*Repo, error) {
+func New(db *postgres.Postgres,
+	auth usecase.IAuthorizationRepo,
+	pairs usecase.IPairsRepo,
+	cards usecase.IBankRepo,
+	notes usecase.ITextRepo,
+) (*Repo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	_, err := db.ExecContext(ctx, schema)
 	if err != nil {
-		return nil, fmt.Errorf("repo - create table failed: %w", err)
+		return nil, fmt.Errorf("repo - create schema failed: %w", err)
 	}
 
 	return &Repo{
 		db,
 		auth,
 		pairs,
+		cards,
+		notes,
 	}, nil
 }
 

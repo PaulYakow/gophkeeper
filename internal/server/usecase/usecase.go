@@ -8,12 +8,20 @@ package usecase
 type Usecase struct {
 	IAuthorizationService
 	IPairsService
+	IBankService
+	ITextService
 }
 
 // New создаёт объект Usecase.
-func New(auth IAuthorizationService, pairs IPairsService) (*Usecase, error) {
+func New(auth IAuthorizationService,
+	pairs IPairsService,
+	cards IBankService,
+	notes ITextService,
+) (*Usecase, error) {
 	return &Usecase{
 		auth,
 		pairs,
+		cards,
+		notes,
 	}, nil
 }

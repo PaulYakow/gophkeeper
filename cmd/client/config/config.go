@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	flag "github.com/spf13/pflag"
 )
 
 type (
@@ -37,8 +38,11 @@ type (
 func New() (*Config, error) {
 	cfg := &Config{}
 
-	// todo: Переделать на флаг! (пример: https://github.com/IdlePhysicist/cave-logger/blob/master/cmd/main.go)
-	err := cleanenv.ReadConfig("./cmd/client/config/config.yaml", cfg)
+	var cfgFile string
+	flag.StringVarP(&cfgFile, "config", "c", "", "path to config file (*.yaml)")
+	flag.Parse()
+
+	err := cleanenv.ReadConfig(cfgFile, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("config error: %w", err)
 	}

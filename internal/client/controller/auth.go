@@ -9,16 +9,20 @@ import (
 	pb "github.com/PaulYakow/gophkeeper/proto"
 )
 
+// UserClient обеспечивает регистрацию/аутентификацию пользователя.
 type UserClient struct {
 	conn *grpc.ClientConn
 }
 
+// NewUserClient создаёт объект UserClient.
 func NewUserClient(conn *grpc.ClientConn) *UserClient {
 	return &UserClient{
 		conn: conn,
 	}
 }
 
+// Register регистрация пользователя с заданными логином и паролем.
+// Возвращает ошибку если пользователь с таким логином уже существует.
 func (c *UserClient) Register(ctx context.Context, login, password string) (string, error) {
 	client := pb.NewUserClient(c.conn)
 	req := &pb.RegisterRequest{
@@ -37,6 +41,7 @@ func (c *UserClient) Register(ctx context.Context, login, password string) (stri
 	return resp.GetToken(), nil
 }
 
+// Login аутентификация пользователя по переданным логину и паролю.
 func (c *UserClient) Login(ctx context.Context, login, password string) (string, error) {
 	client := pb.NewUserClient(c.conn)
 	req := &pb.LoginRequest{

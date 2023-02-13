@@ -11,7 +11,7 @@ import (
 
 const (
 	getPairsByUserID = `
-SELECT * FROM public.pairs
+SELECT * FROM resources.pairs_data
 WHERE user_id = $1
 ORDER BY id;
 `

@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PairClient interface {
-	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
+	GetAll(ctx context.Context, in *GetAllPairsRequest, opts ...grpc.CallOption) (*GetAllPairsResponse, error)
 }
 
 type pairClient struct {
@@ -33,8 +33,8 @@ func NewPairClient(cc grpc.ClientConnInterface) PairClient {
 	return &pairClient{cc}
 }
 
-func (c *pairClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
-	out := new(GetAllResponse)
+func (c *pairClient) GetAll(ctx context.Context, in *GetAllPairsRequest, opts ...grpc.CallOption) (*GetAllPairsResponse, error) {
+	out := new(GetAllPairsResponse)
 	err := c.cc.Invoke(ctx, "/proto.Pair/GetAll", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (c *pairClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc
 // All implementations must embed UnimplementedPairServer
 // for forward compatibility
 type PairServer interface {
-	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
+	GetAll(context.Context, *GetAllPairsRequest) (*GetAllPairsResponse, error)
 	mustEmbedUnimplementedPairServer()
 }
 
@@ -54,7 +54,7 @@ type PairServer interface {
 type UnimplementedPairServer struct {
 }
 
-func (UnimplementedPairServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
+func (UnimplementedPairServer) GetAll(context.Context, *GetAllPairsRequest) (*GetAllPairsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
 func (UnimplementedPairServer) mustEmbedUnimplementedPairServer() {}
@@ -71,7 +71,7 @@ func RegisterPairServer(s grpc.ServiceRegistrar, srv PairServer) {
 }
 
 func _Pair_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllRequest)
+	in := new(GetAllPairsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func _Pair_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/proto.Pair/GetAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PairServer).GetAll(ctx, req.(*GetAllRequest))
+		return srv.(PairServer).GetAll(ctx, req.(*GetAllPairsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
