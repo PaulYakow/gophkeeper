@@ -1,0 +1,10 @@
+app:
+  name: 'gophkeeper-server'
+  version: '0.0.2'
+
+postgres:
+  max_open: 2
+  conn_attempts: 5
+
+grpc:
+  port: '9090'

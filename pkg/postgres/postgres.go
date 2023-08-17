@@ -1,4 +1,4 @@
-// Package v2 является обёрткой над библиотекой github.com/jmoiron/sqlx.
+// Package postgres является обёрткой над библиотекой github.com/jmoiron/sqlx.
 package postgres
 
 import (
@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	_ "github.com/jackc/pgx/stdlib"
+	_ "github.com/jackc/pgx/stdlib" // use as driver for sqlx
 	"github.com/jmoiron/sqlx"
 )
 
@@ -73,6 +73,7 @@ func New(dsn string, opts ...Option) (*Postgres, error) {
 	return pg, nil
 }
 
+// Shutdown дожидается завершения запросов и закрывает все открытые соединения.
 func (pg *Postgres) Shutdown() error {
 	return pg.Close()
 }

@@ -31,13 +31,13 @@ type Logger struct {
 func New(loggerName string) *Logger {
 	consoleConfig := newConsoleEncoderConfig()
 	consoleEncoder := zapcore.NewConsoleEncoder(consoleConfig)
-	fileEncoder := zapcore.NewJSONEncoder(consoleConfig)
-	logFile, _ := os.OpenFile(defaultLogFile, defaultFileFlags, 0644)
-	writer := zapcore.AddSync(logFile)
+	// fileEncoder := zapcore.NewJSONEncoder(consoleConfig)
+	// logFile, _ := os.OpenFile(defaultLogFile, defaultFileFlags, 0o644)
+	// writer := zapcore.AddSync(logFile)
 
 	core := zapcore.NewTee(
 		zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), defaultLogLevel),
-		zapcore.NewCore(fileEncoder, writer, defaultLogLevel),
+		// zapcore.NewCore(fileEncoder, writer, defaultLogLevel),
 	)
 
 	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel)).Named(loggerName)
@@ -72,6 +72,7 @@ func CustomLevelEncoder(level zapcore.Level, enc zapcore.PrimitiveArrayEncoder) 
 func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 | 15:04:05.99"))
 }
+
 func (l *Logger) Named(s string) ILogger {
 	return &Logger{logger: l.logger.Named(s)}
 }

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "gophkeeper/proto";
+
+message GetAllCardsRequest {
+  string token = 1;
+}
+
+message CardMsg {
+  int64 id = 1;
+  string card_holder = 2;
+  string number = 3;
+  string expiration_date = 4;
+  string metadata = 5;
+}
+
+message GetAllCardsResponse {
+  repeated CardMsg cards = 1;
+  string error = 2;
+}
+
+service Bank {
+  rpc GetAll(GetAllCardsRequest) returns (GetAllCardsResponse);
+}
